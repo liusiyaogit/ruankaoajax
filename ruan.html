@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>1_ajax小试牛刀</title>
+		<style>
+			#content{
+				width: 300px;
+				height: 100px;
+				border: 1px solid black;
+				margin-top: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<h3>该页面是测试：ajax小试牛刀</h3>
+		<button id="btn">点我发送请求(原生js-ajax-get)</button>
+		<div id="content"></div>
+		<script type="text/javascript" >
+			//获取按钮
+			const btn = document.getElementById('btn')
+			const content = document.getElementById('content')
+			//给按钮绑定监听
+			btn.onclick = ()=>{
+                //发送ajax请求有如下几个步骤
+				//1.创建xhr实例对象
+				const xhr = new XMLHttpRequest()
+                   //设置响应体数据的类型便于下面进行自动数据转化
+                   xhr.responseType="json"
+                //绑定监听
+				//on  当xxx时候
+				//ready 准备
+				//state 状态
+				//change 状态
+				//xhr内部有5种状态，readyState值分别为：0、1、2、3、4
+				//xhr实例对象，在实例出来的那一刻状态就是0，之后不断地变化
+                //xhr实例对象，在实例出来的那一刻状态就是0
+				/* 
+					xhr内部有5种状态，值分别为：0、1、2、3、4
+							0：实例出来的那一刻状态就是0，初始状态。
+							1：open已经调用了，但是send还没有调用，此时可以修改请求头内容。
+							2：send已经调用了，已经无法修改请求头
+							3：已经回来一部分数据了，小的数据会在此阶段一次性接收完毕，较大的数据有待进一步接收，响应头回来了。
+							4：数据全部接收完毕
+				*/
+				xhr.onreadystatechange = ()=>{
+                    // console.log('@');
+                // console.log(xhr.readyState); 这两个可以看一次请求发出去之后掉了几次onreadystatechange方法
+                    //函数体   原生 以后写代码不会用但是笔试需要
+                    /* if(xhr.readyState === 1){
+						xhr.setRequestHeader('demo',123) //配置自定义请求头  
+                        xhr.setRequestHeader('Content-Type','application/x-www-form-erlencoded') //配置预定义请求头  
+					} */
+					/* if(xhr.readyState === 2){
+						xhr.setRequestHeader('demo',123) //配置请求头--报错
+					} */
+					// if(xhr.readyState === 3){
+					// 	console.log('3时接收到的数据',xhr.response);
+					// 	console.log('3时接收到的响应头',xhr.getAllResponseHeaders());
+                    //console.log('3时接收到的响应头',xhr.getResponseHeaders('content_length')); 响应头长度如果有汉字那么字节数就不是一个字节 单独拿某个响应头
+					// }
+                 
+					if(xhr.readyState === 4 && (xhr.status >= 200 && xhr.status < 300)){
+						// console.log(xhr.response);
+						// content.innerHTML = `<h3>${xhr.response}</h3>`//模板字符串也可以用在里面
+                        //当收到json数据时候，想给他转换成正常的格式那么就需要进行数据转化
+                        //手动数据转化
+                        // let data = JSON.parse(xhr.response);
+                        // console.log(data);
+						// content.innerHTML = data.mingzi;
+                        //自动转化数据的话首先需要设置响应体数据的类型，见上面
+                        console.log(xhr.response);
+						content.innerHTML = `<h3>${xhr.response.mingzi}</h3>`
+
+
+					}
+				}
+				//2.指定发送请求的：method、url、参数。就是往哪里发  在ajax中设置url参数'http://127.0.0.1:8080/test?a=100&b=2'
+				// xhr.open('GET','http://127.0.0.1:8080/test?a=100&b=2') //携带query参数,urlencodede编码形式
+                // xhr.open('GET','http://127.0.0.1:8080/test2/a/6/b') //携带params参数
+				xhr.open('POST','http:///127.0.0.1:8080/test3') 
+				//加入特殊的响应头头用于服务器认识urlencoded形式的的请求体
+				// xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded')
+				//3.发送请求,里面可以放请求体，这是在post请求中请求体里面放入urlencoded形式的参数时如下写法
+				// xhr.send('mingzi=请求体参数&age=在hesder最下面应该看到的')
+
+				//加入特殊的响应头头用于服务器认识json形式的的请求体
+				xhr.setRequestHeader('Content-type','application/json')
+				//3.发送请求,里面可以放请求体
+				const person = {name:'老刘',age:20}
+				xhr.send(JSON.stringify(person))
+			}
+		</script>
+	</body>
+</html>
